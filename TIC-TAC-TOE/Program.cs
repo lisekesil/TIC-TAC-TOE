@@ -6,10 +6,15 @@ namespace TIC_TAC_TOE
     {
         static void Main(string[] args)
         {
-            string namePlayerA = "";
-            string namePlayerB = "";
-            char symbolPlayerA = 'x';
-            char symbolPlayerB = 'o';
+         
+
+            HumanPlayer pA = new HumanPlayer();
+            ComputerPlayer pB = new ComputerPlayer();
+            pA.Name = "Użytkownik";
+            pA.Symbol = 'x';
+            pB.Name = "Kommputer";
+            pB.Symbol = 'o';
+
 
             char[,] board = new char[3, 3]
             {
@@ -19,17 +24,25 @@ namespace TIC_TAC_TOE
             };
             char[,] boardCopy = board.Clone() as char[,];
 
-            Console.Write("player A name: ");
-            namePlayerA = Console.ReadLine();
-            Console.Write("player B name: ");
-            namePlayerB = Console.ReadLine();
 
             bool endGame = false;
+            bool isPlayerAMove = true;
             for(int round = 0; round < board.Length; ++round)
             {
                 Console.Clear();
                 DrawBoard(board);
-
+                if (isPlayerAMove)
+                {
+                    Console.WriteLine("Ruch wykonuje: " + pA.Name);
+                    endGame = pA.MakeMove(board, boardCopy);
+                    isPlayerAMove = false;
+                }
+                else
+                {
+                    Console.WriteLine("Ruch wykonuje: " + pB.Name);
+                    endGame = pB.MakeMove(board, boardCopy);
+                    isPlayerAMove = true;
+                }
                 Console.ReadKey();
                 //...
             }
@@ -48,6 +61,35 @@ namespace TIC_TAC_TOE
                 }
                 Console.WriteLine();
             }
+        }
+    }
+
+    interface IMove
+    {
+        bool MakeMove(char[,] board, char[,] boardCopy);
+    }
+
+    abstract class Player
+    {
+        public string Name { get; set; }
+        public char Symbol { get; set; }
+    }
+
+    class HumanPlayer : Player, IMove
+    {
+        public bool MakeMove(char[,] board, char[,] boardCopy)
+        {
+            //tu bedzie wykonany ruch
+            return false;
+        }
+    }
+
+    class ComputerPlayer : Player, IMove
+    {
+        public bool MakeMove(char[,] board, char[,] boardCopy)
+        {
+            //tu bedzie ruch 
+            return false;
         }
     }
 }
