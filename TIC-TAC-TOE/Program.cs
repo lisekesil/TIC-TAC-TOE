@@ -73,6 +73,58 @@ namespace TIC_TAC_TOE
     {
         public string Name { get; set; }
         public char Symbol { get; set; }
+
+        public bool CheckIfGameOver(char[,] board)
+        {
+            int height = board.GetLength(0);
+            int width = board.GetLength(1);
+            if (width != height)
+                throw new Exception("Plansza nie jest kwadratowa!");
+
+            //sprawdz wiersze
+            for(int i = 0; i<height; ++i)
+            {
+                int sumOfVerse = 0;
+                for(int j =0; j<width; ++j)
+                {
+                    if (board[i, j] == Symbol)
+                        ++sumOfVerse;
+                }
+
+                if (sumOfVerse == width)
+                    return true;
+            }
+
+            //sprawdz kolumny
+            for(int j = 0; j<width; ++j)
+            {
+                int sumOfColumn = 0;
+                for(int i; i<height; ++i)
+                {
+                    if (board[i, j] == Symbol)
+                        ++sumOfColumn;
+                }
+
+                if (sumOfColumn == height)
+                    return true;
+            }
+
+            //sprawdz przekatne
+            int sumOfDiagonalA = 0;
+            int sumOfDiagonalB = 0;
+            for (int k =0; k<width; ++k)
+            {
+                if (board[k, k] == Symbol)
+                    ++sumOfDiagonalA;
+                if (board[k, width - 1 - k] == Symbol)
+                    ++sumOfDiagonalB;
+            }
+            if (sumOfDiagonalA == width || sumOfDiagonalB == width)
+                return true;
+
+            //jesli zadna z opcji, nie ma konca gry
+            return false;
+        }
     }
 
     class HumanPlayer : Player, IMove
@@ -80,7 +132,7 @@ namespace TIC_TAC_TOE
         public bool MakeMove(char[,] board, char[,] boardCopy)
         {
             //tu bedzie wykonany ruch
-            return false;
+            return CheckIfGameOver(board);
         }
     }
 
@@ -89,7 +141,7 @@ namespace TIC_TAC_TOE
         public bool MakeMove(char[,] board, char[,] boardCopy)
         {
             //tu bedzie ruch 
-            return false;
+            return CheckIfGameOver(board);
         }
     }
 }
