@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace TIC_TAC_TOE
 {
@@ -43,10 +44,30 @@ namespace TIC_TAC_TOE
                     endGame = pB.MakeMove(board, boardCopy);
                     isPlayerAMove = true;
                 }
-                Console.ReadKey();
+
+                if (endGame)
+                    break;
                 //...
             }
+            //zakonczenie gry
+            Console.Clear();
+            DrawBoard(board);
+            Console.Write("Koniec Gry! ");
+            if (endGame)
+            {
+                Console.Write("Wygral: ");
+                if (isPlayerAMove)
+                    Console.WriteLine(pB.Name);
+                else
+                    Console.WriteLine(pA.Name);
+            }
+            else
+                Console.WriteLine("Remis.");
+            
+            Console.ReadKey();
         }
+
+
 
         static void DrawBoard(char[,] board)
         {
@@ -99,7 +120,7 @@ namespace TIC_TAC_TOE
             for(int j = 0; j<width; ++j)
             {
                 int sumOfColumn = 0;
-                for(int i; i<height; ++i)
+                for(int i = 0; i <height; ++i)
                 {
                     if (board[i, j] == Symbol)
                         ++sumOfColumn;
@@ -125,13 +146,42 @@ namespace TIC_TAC_TOE
             //jesli zadna z opcji, nie ma konca gry
             return false;
         }
+
+        public bool AddSymbol(char c, char[,] board, char[,] boardCopy)
+        {
+            int height = board.GetLength(0);
+            int width = board.GetLength(1);
+            if (height != boardCopy.GetLength(0) || width != boardCopy.GetLength(1))
+                throw new Exception("rozmiary plansz nie zgadzaja sie");
+
+            for(int i = 0; i < height; ++i)
+                for(int j = 0; j <width; ++j)
+                {
+                    if ((board[i, j] == c) && (board[i, j] == boardCopy[i, j]))
+                    {
+                        board[i, j] = Symbol;
+                        return true;
+                    }
+                }
+
+            return false;
+        }
     }
 
     class HumanPlayer : Player, IMove
     {
         public bool MakeMove(char[,] board, char[,] boardCopy)
         {
-            //tu bedzie wykonany ruch
+            char selectedField;
+            do
+            {
+                Console.Write("Wybierz puste pole: ");
+                selectedField = Console.ReadKey().KeyChar;
+                Console.WriteLine();
+            }
+            while (!AddSymbol(selectedField, board, boardCopy));
+
+
             return CheckIfGameOver(board);
         }
     }
@@ -140,7 +190,16 @@ namespace TIC_TAC_TOE
     {
         public bool MakeMove(char[,] board, char[,] boardCopy)
         {
-            //tu bedzie ruch 
+            Random rnd = new Random();
+            char selectedField;
+            do
+            {
+                int m = rnd.Next(1, board.Length + 1);
+                selectedField = m.ToString()[0];
+            }
+            while (!AddSymbol(selectedField, board, boardCopy));
+            Thread.Sleep(2000);
+            
             return CheckIfGameOver(board);
         }
     }
